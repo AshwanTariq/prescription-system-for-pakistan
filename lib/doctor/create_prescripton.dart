@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 import 'package:rxpakistan/main.dart';
 import 'package:substring_highlight/substring_highlight.dart';
+import 'package:badges/badges.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Prescription extends StatefulWidget {
   const Prescription({Key? key}) : super(key: key);
@@ -21,8 +24,9 @@ class _PrescriptionState extends State<Prescription> {
   var qty = TextEditingController();
   var note = TextEditingController();
 
-  List<Drugs> drgs = [];
-
+  //List<Drugs> drgs = [];
+  String? compannyDropDownRslt = "Compnay";
+  String? type = "Type";
   List<String> autoCompleteTypes = <String>[
     "Capsule",
     "Injection",
@@ -83,210 +87,194 @@ class _PrescriptionState extends State<Prescription> {
     "Misbha"
   ];
 
-  String date() {
+  DateTime getdate() {
     var now = DateTime.now();
-    var formatter = DateFormat('yyyy-MM-dd');
-    String formattedDate = formatter.format(now);
-    return formattedDate.toString();
+    /*var formatter = DateFormat('yyyy-MM-dd');
+    String formattedDate = formatter.format(now);*/
+    return now;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Create Precription", style: TextStyle(fontSize: 25)),
-        centerTitle: true,
-      ),
-      body: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: myTextFild().getInputField(
-                            "Patient's Name",
-                            Icon(Icons.account_circle_rounded),
-                            autoCompleteData,
-                            patient)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Date\n${date()}",
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                "Add Drugs",
-                style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: myTextFild().getInputField(
-                            "Name",
-                            Icon(Icons.animation_rounded),
-                            autoCompleteDrugs,
-                            drugs)),
-                  ),
-                  Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: myTextFild().getInputField("Type", Icon(Icons.apps_rounded),
-                            autoCompleteTypes, types)),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: myTextFild().getInputField(
-                            "Company", Icon(Icons.home), companylist, company)),
-                  ),
-                  Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                          controller: time,
-                          decoration: InputDecoration(
-                              hintText: "M/A/N",
-                              prefixIcon: Icon(Icons.access_alarm)),
-                        )),
-                  ),
-                  Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                          keyboardType: TextInputType.number,
-                          controller: qty,
-                          decoration: InputDecoration(
-                              hintText: "400mg",
-                              prefixIcon: Icon(Icons.equalizer_rounded)),
-                        )),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Container(
-                  child: TextField(
-                    controller: note,
-                    decoration: InputDecoration(
-                      hintText: "NOTE",
-                      prefixIcon: Icon(Icons.create),
-                    ),
-                  ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Badge(
+            badgeContent: Text('3'),
+            child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(40),
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                      onPressed: () {
-                        drgs.add(Drugs(
-                            name: drugs.text,
-                            type: types.text,
-                            comapny: company.text,
-                            time: time.text,
-                            qty: qty.text,
-                            note: note.text.isEmpty ? "" : note.text));
-                        setState(() {});
-                      },
-                      child: Text("ADD Drug")),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text("Send Drug"),
-                  ),
-                ],
-              ),
-              Text(
-                "All Drugs",
-                style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-              ),
-              Builder(builder: (context) {
-                if (drgs.isEmpty) {
-                  return Center(child: Text("ADD DRUGS"));
+                child: IconButton(onPressed: () {}, icon: Icon(Icons.circle)))),
+      ),
+      appBar: AppBar(
+        title: Text("Create Precription", style: TextStyle(fontSize: 22)),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Autocomplete(
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                if (textEditingValue.text.isEmpty) {
+                  return const Iterable<String>.empty();
                 } else {
-                  return ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: drgs.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(20)),
-                                boxShadow: [BoxShadow(
-
-                                  color: Colors.black45,
-                                  spreadRadius: 2,
-                                  blurRadius: 4,
-                                  offset: Offset(2,6),
-                                )],
-                                color: Colors.white
-
-                            ),
-                            child: ListTile(
-                              leading: Icon(Icons.animation,size: 30,color: Colors.indigo,),
-                              title: Text(
-                                "DRUG ADDED",
-                                style: TextStyle(fontSize: 22),
-                              ),
-                              /*subtitle: Text("${drgs[index].note}"),
-                              trailing: Text(
-                                  "${drgs[index].time}\n${drgs[index].type}",
-                                  style: TextStyle(fontSize: 10)),*/
-                            ),
-                          ),
-                        );
-                      });
+                  return autoCompleteDrugs.where((word) => word
+                      .toLowerCase()
+                      .contains(textEditingValue.text.toLowerCase()));
                 }
+              }, optionsViewBuilder:
+                      (context, Function(String) onSelected, options) {
+                return Material(
+                  elevation: 4,
+                  child: ListView.separated(
+                    padding: EdgeInsets.zero,
+                    itemBuilder: (context, index) {
+                      final option = options.elementAt(index);
+
+                      return ListTile(
+                        title: SubstringHighlight(
+                          text: option.toString(),
+                          term: drugs.text,
+                          textStyleHighlight:
+                              TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        onTap: () {
+                          onSelected(option.toString());
+                        },
+                      );
+                    },
+                    separatorBuilder: (context, index) => Divider(),
+                    itemCount: options.length,
+                  ),
+                );
+              }, onSelected: (selectedString) {
+                print(selectedString);
+              }, fieldViewBuilder:
+                      (context, controller, focusNode, onEditingComplete) {
+                drugs = controller;
+
+                return TextField(
+                  focusNode: focusNode,
+                  controller: controller,
+                  onEditingComplete: onEditingComplete,
+                  decoration:
+                      getInputDecoration("Drug Name", Icon(Icons.circle)),
+                );
               }),
-            ],
-          ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                DropdownButton<String>(
+                  hint: Text(compannyDropDownRslt!),
+                  icon: Icon(Icons.arrow_drop_down),
+                  items: companylist.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    compannyDropDownRslt = value;
+                    setState(() {});
+                    print(compannyDropDownRslt);
+                    print(value);
+                  },
+                ),
+                DropdownButton<String>(
+                  hint: Text(type!),
+                  icon: Icon(Icons.arrow_drop_down),
+                  items: autoCompleteTypes.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    type = value;
+                    setState(() {});
+                    print(type);
+                    print(value);
+                  },
+                ),
+              ],
+            ),
+            Incrementor(onchangedCallback: (value) {
+              print(value);
+            },),
+          ],
         ),
       ),
     );
   }
 
-
-
   InputDecoration getInputDecoration(String hint, Widget icon) {
     return InputDecoration(
+      labelText: hint,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.grey[300]!),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.grey[300]!),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(14),
       ),
       prefixIcon: icon,
-      prefixIconColor: Colors.amber,
-      hintStyle: TextStyle(color: Colors.grey),
-      hintText: hint,
     );
   }
 }
+
+class Incrementor extends StatefulWidget {
+   Incrementor({Key? key,required this.onchangedCallback}) : super(key: key);
+
+   final Function(int) onchangedCallback;
+  @override
+  _IncrementorState createState() => _IncrementorState();
+}
+
+class _IncrementorState extends State<Incrementor> {
+  int value = 0;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(20),
+      ),
+
+      height: 60,
+      child: Row(
+        children: [
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  if (value != 0) {
+                    value--;
+                    widget.onchangedCallback.call(value);
+                  }
+                });
+              },
+              icon: FaIcon(FontAwesomeIcons.minus)),
+
+          Text(value.toString()),
+          IconButton(
+              onPressed: () {
+
+                setState(() {
+                  value++;
+                  widget.onchangedCallback.call(value);
+                });
+              },
+              icon: Icon(Icons.add)),
+
+        ],
+      ),
+    );
+  }
+}
+
+/*
 class Drugs {
   var name;
   var type;
@@ -302,72 +290,4 @@ class Drugs {
         required this.qty,
         var note});
 }
-class myTextFild {
-  Widget getInputField(String value, Widget icon, List<String> Data,
-      TextEditingController TEC) {
-    return Autocomplete(optionsBuilder: (TextEditingValue textEditingValue) {
-      if (textEditingValue.text.isEmpty) {
-        return const Iterable<String>.empty();
-      } else {
-        return Data.where((word) =>
-            word.toLowerCase().contains(textEditingValue.text.toLowerCase()));
-      }
-    }, optionsViewBuilder: (context, Function(String) onSelected, options) {
-      return Material(
-        elevation: 4,
-        child: ListView.separated(
-          padding: EdgeInsets.zero,
-          itemBuilder: (context, index) {
-            final option = options.elementAt(index);
-
-            return ListTile(
-              // title: Text(option.toString()),
-              title: SubstringHighlight(
-                text: option.toString(),
-                term: TEC.text,
-                textStyleHighlight: TextStyle(fontWeight: FontWeight.w700),
-              ),
-              //subtitle: Text("This is subtitle"),
-              onTap: () {
-                onSelected(option.toString());
-              },
-            );
-          },
-          separatorBuilder: (context, index) => Divider(),
-          itemCount: options.length,
-        ),
-      );
-    }, onSelected: (selectedString) {
-      print(selectedString);
-    }, fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
-      TEC = controller;
-      return TextField(
-        focusNode: focusNode,
-        controller: controller,
-        onEditingComplete: onEditingComplete,
-        decoration: getInputDecoration(value, icon),
-      );
-    });
-  }
-
-  InputDecoration getInputDecoration(String hint, Widget icon) {
-    return InputDecoration(
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.grey[300]!),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.grey[300]!),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.grey[300]!),
-      ),
-      prefixIcon: icon,
-      prefixIconColor: Colors.amber,
-      hintStyle: TextStyle(color: Colors.grey),
-      hintText: hint,
-    );
-  }
-}
+*/

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'doctor/doctor_main_screen.dart';
+import 'package:rxpakistan/doctor/doctor_main_screen.dart';
+import 'package:rxpakistan/signup_page.dart';
+
+import 'doctor/create_prescripton.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,11 +16,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Rx Pakistan',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: Prescription(),
     );
   }
 }

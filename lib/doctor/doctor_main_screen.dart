@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:rxpakistan/doctor/create_prescripton.dart';
 import 'dart:convert' as convert;
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class DocHomePage extends StatefulWidget {
+  const DocHomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<DocHomePage> createState() => _DocHomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _DocHomePageState extends State<DocHomePage> {
 
   List<String> titles =["Ashwan","Akbar Zain","Hammad","Tariq Ch","Usman Aslam","Awais tariq",
     "Zara Asharaf","Akbar Mirza","Tariq ali","Mutaza Ch","Eisha","Misbha","Akbar Mirza","Tariq ali","Mutaza Ch","Eisha","Misbha"];
