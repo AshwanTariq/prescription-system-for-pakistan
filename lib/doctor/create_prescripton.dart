@@ -2,10 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
+import 'package:rxpakistan/doctor/drugs_detail_screen.dart';
 import 'package:rxpakistan/main.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 import 'package:badges/badges.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import '../widgets/custom_widgets.dart';
+import 'package:markdown_editable_textinput/format_markdown.dart';
+import 'package:markdown_editable_textinput/markdown_text_input.dart';
+
+import 'doctor_model_file.dart';
 
 class Prescription extends StatefulWidget {
   const Prescription({Key? key}) : super(key: key);
@@ -15,18 +22,21 @@ class Prescription extends StatefulWidget {
 }
 
 class _PrescriptionState extends State<Prescription> {
-  var patient = TextEditingController();
-  var types = TextEditingController();
-  var drugs = TextEditingController();
-  var time = TextEditingController();
 
-  var company = TextEditingController();
-  var qty = TextEditingController();
-  var note = TextEditingController();
+  var drugsctrl = TextEditingController();
 
-  //List<Drugs> drgs = [];
-  String? compannyDropDownRslt = "Compnay";
+
+  String description = '';
+  TextEditingController controllerForNote = TextEditingController();
+
+  List<Drugs> AllDrugs = [];
+  String? company = "Company";
   String? type = "Type";
+  int Breakfast = 0;
+  int Lunch = 0;
+  int Dinner = 0;
+
+
   List<String> autoCompleteTypes = <String>[
     "Capsule",
     "Injection",
@@ -95,199 +105,230 @@ class _PrescriptionState extends State<Prescription> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    controllerForNote.addListener(() {
+      print(controllerForNote.text);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Badge(
-            badgeContent: Text('3'),
-            child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                child: IconButton(onPressed: () {}, icon: Icon(Icons.circle)))),
-      ),
-      appBar: AppBar(
-        title: Text("Create Precription", style: TextStyle(fontSize: 22)),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Autocomplete(
-                  optionsBuilder: (TextEditingValue textEditingValue) {
-                if (textEditingValue.text.isEmpty) {
-                  return const Iterable<String>.empty();
-                } else {
-                  return autoCompleteDrugs.where((word) => word
-                      .toLowerCase()
-                      .contains(textEditingValue.text.toLowerCase()));
-                }
-              }, optionsViewBuilder:
-                      (context, Function(String) onSelected, options) {
-                return Material(
-                  elevation: 4,
-                  child: ListView.separated(
-                    padding: EdgeInsets.zero,
-                    itemBuilder: (context, index) {
-                      final option = options.elementAt(index);
 
-                      return ListTile(
-                        title: SubstringHighlight(
-                          text: option.toString(),
-                          term: drugs.text,
-                          textStyleHighlight:
-                              TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        onTap: () {
-                          onSelected(option.toString());
-                        },
-                      );
-                    },
-                    separatorBuilder: (context, index) => Divider(),
-                    itemCount: options.length,
-                  ),
-                );
-              }, onSelected: (selectedString) {
-                print(selectedString);
-              }, fieldViewBuilder:
-                      (context, controller, focusNode, onEditingComplete) {
-                drugs = controller;
 
-                return TextField(
-                  focusNode: focusNode,
-                  controller: controller,
-                  onEditingComplete: onEditingComplete,
-                  decoration:
-                      getInputDecoration("Drug Name", Icon(Icons.circle)),
-                );
-              }),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                DropdownButton<String>(
-                  hint: Text(compannyDropDownRslt!),
-                  icon: Icon(Icons.arrow_drop_down),
-                  items: companylist.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    compannyDropDownRslt = value;
-                    setState(() {});
-                    print(compannyDropDownRslt);
-                    print(value);
-                  },
-                ),
-                DropdownButton<String>(
-                  hint: Text(type!),
-                  icon: Icon(Icons.arrow_drop_down),
-                  items: autoCompleteTypes.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    type = value;
-                    setState(() {});
-                    print(type);
-                    print(value);
-                  },
-                ),
-              ],
-            ),
-            Incrementor(onchangedCallback: (value) {
-              print(value);
-            },),
-          ],
+
+      return Scaffold(
+        floatingActionButton: Badge(
+            animationType: BadgeAnimationType.scale,
+            badgeContent: Text(AllDrugs.length.toString()),
+            child: FloatingActionButton(
+              onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>AllDrugsScreen(drgs: AllDrugs)));},
+              child: FaIcon(FontAwesomeIcons.pills),
+            )
         ),
-      ),
-    );
+        appBar: AppBar(
+          title: Text("Create Prescription", style: TextStyle(fontSize: 22)),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Autocomplete(
+                    optionsBuilder: (TextEditingValue textEditingValue) {
+                      if (textEditingValue.text.isEmpty) {
+                        return const Iterable<String>.empty();
+                      } else {
+                        return autoCompleteDrugs.where((word) => word
+                            .toLowerCase()
+                            .contains(textEditingValue.text.toLowerCase()));
+                      }
+                    }, optionsViewBuilder:
+                    (context, Function(String) onSelected, options) {
+                  return Material(
+                    elevation: 4,
+                    child: ListView.separated(
+                      padding: EdgeInsets.zero,
+                      itemBuilder: (context, index) {
+                        final option = options.elementAt(index);
+
+                        return ListTile(
+                          title: SubstringHighlight(
+                            text: option.toString(),
+                            term: drugsctrl.text,
+                            textStyleHighlight:
+                            TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          onTap: () {
+                            onSelected(option.toString());
+                          },
+                        );
+                      },
+                      separatorBuilder: (context, index) => Divider(),
+                      itemCount: options.length,
+                    ),
+                  );
+                }, onSelected: (selectedString) {
+                  print(selectedString);
+                }, fieldViewBuilder:
+                    (context, controller, focusNode, onEditingComplete) {
+                  drugsctrl = controller;
+
+                  return TextField(
+                    focusNode: focusNode,
+                    controller: controller,
+                    onEditingComplete: onEditingComplete,
+                    decoration: getInputDecoration(
+                        "Drug Name", FaIcon(FontAwesomeIcons.pills)),
+                  );
+                }),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  DropdownButton<String>(
+                    hint: Text(company!),
+                    icon: FaIcon(FontAwesomeIcons.building),
+                    items: companylist.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      company = value;
+                      setState(() {});
+                      print(company);
+                      print(value);
+                    },
+                  ),
+                  DropdownButton<String>(
+                    hint: Text(type!),
+                    icon: FaIcon(FontAwesomeIcons.capsules),
+                    items: autoCompleteTypes.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      type = value;
+                      setState(() {});
+                      print(type);
+                      print(value);
+                    },
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Incrementor(
+                  time: "Breakfast",
+                  onchangedCallback: (value) {
+                    Breakfast = value;
+                    print(value);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Incrementor(
+                  time: "Lunch",
+                  onchangedCallback: (value) {
+                    Lunch = value;
+                    print(value);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Incrementor(
+                  time: "Dinner",
+                  onchangedCallback: (value) {
+                    Dinner = value;
+                    print(value);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: MarkdownTextInput(
+                      (String value) => setState(() => description = value),
+                  description,
+                  label: 'Enter any kind of extra note here.',
+                  maxLines: 10,
+                  actions: [
+                    MarkdownType.bold,
+                    MarkdownType.italic,
+                    MarkdownType.title,
+                    MarkdownType.blockquote
+                  ],
+                  controller: controllerForNote,
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  var oneDrug = Drugs(
+                      name: drugsctrl.text.isEmpty ? "NO DRG" : drugsctrl.text,
+                      type: type == "Type" ? "NO Type" : type,
+                      comapny: company == "Company" ? "No Compnay" : company,
+                      method: "B$Breakfast/L$Lunch/D$Dinner",
+                      note: controllerForNote.text.isEmpty ? "No Note" : controllerForNote.text);
+                  AllDrugs.add(oneDrug);
+                  drugsctrl.text = "";
+                  type = "Type";
+                  company = "Company";
+                  Breakfast = 0;
+                  Lunch = 0;
+                  Dinner = 0;
+                  controllerForNote.text="";
+
+                  print(AllDrugs.length);
+
+                  setState(() {});
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.plus,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text('Add Drug'),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.prescription,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text('Send Rx'),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+
+
   }
 
   InputDecoration getInputDecoration(String hint, Widget icon) {
     return InputDecoration(
+      icon: icon,
       labelText: hint,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-      ),
-      prefixIcon: icon,
     );
   }
 }
-
-class Incrementor extends StatefulWidget {
-   Incrementor({Key? key,required this.onchangedCallback}) : super(key: key);
-
-   final Function(int) onchangedCallback;
-  @override
-  _IncrementorState createState() => _IncrementorState();
-}
-
-class _IncrementorState extends State<Incrementor> {
-  int value = 0;
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: BorderRadius.circular(20),
-      ),
-
-      height: 60,
-      child: Row(
-        children: [
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  if (value != 0) {
-                    value--;
-                    widget.onchangedCallback.call(value);
-                  }
-                });
-              },
-              icon: FaIcon(FontAwesomeIcons.minus)),
-
-          Text(value.toString()),
-          IconButton(
-              onPressed: () {
-
-                setState(() {
-                  value++;
-                  widget.onchangedCallback.call(value);
-                });
-              },
-              icon: Icon(Icons.add)),
-
-        ],
-      ),
-    );
-  }
-}
-
-/*
-class Drugs {
-  var name;
-  var type;
-  var comapny;
-  var time;
-  var qty;
-  var note;
-  Drugs(
-      {required this.name,
-        required this.type,
-        required this.comapny,
-        required this.time,
-        required this.qty,
-        var note});
-}
-*/
