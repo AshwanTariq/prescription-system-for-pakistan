@@ -33,45 +33,49 @@ class _IncrementorState extends State<Incrementor> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
 
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.blue,width: 2)
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.blue,width: 2)
 
-      ),
+        ),
 
-      height: 43,
-      child: Row(
+        height: 43,
+        child: Row(
 
-        children: [
-          Expanded(child: Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Text(widget.time,style: TextStyle(fontSize: 18,),),
-          )),
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  if (value != 0) {
-                    value--;
+          children: [
+
+            Expanded(child: Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: Text(widget.time,style: TextStyle(fontSize: 18,),),
+            )),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    if (value != 0) {
+                      value--;
+                      widget.onchangedCallback.call(value);
+                    }
+                  });
+                },
+                icon: FaIcon(FontAwesomeIcons.minus)),
+
+            Text(value.toString()),
+            IconButton(
+                onPressed: () {
+
+                  setState(() {
+                    value++;
                     widget.onchangedCallback.call(value);
-                  }
-                });
-              },
-              icon: FaIcon(FontAwesomeIcons.minus)),
+                  });
+                },
+                icon: Icon(Icons.add)),
 
-          Text(value.toString()),
-          IconButton(
-              onPressed: () {
-
-                setState(() {
-                  value++;
-                  widget.onchangedCallback.call(value);
-                });
-              },
-              icon: Icon(Icons.add)),
-
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
+import 'package:rxpakistan/apihandler.dart';
 import 'package:rxpakistan/doctor/drugs_detail_screen.dart';
 import 'package:rxpakistan/main.dart';
 import 'package:substring_highlight/substring_highlight.dart';
@@ -222,35 +223,26 @@ class _PrescriptionState extends State<Prescription> {
                   ),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Incrementor(
-                  time: "Breakfast",
-                  onchangedCallback: (value) {
-                    Breakfast = value;
-                    print(value);
-                  },
-                ),
+              Incrementor(
+                time: "Breakfast Dosage",
+                onchangedCallback: (value) {
+                  Breakfast = value;
+                  print(value);
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Incrementor(
-                  time: "Lunch",
-                  onchangedCallback: (value) {
-                    Lunch = value;
-                    print(value);
-                  },
-                ),
+              Incrementor(
+                time: "Lunch Dosage",
+                onchangedCallback: (value) {
+                  Lunch = value;
+                  print(value);
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Incrementor(
-                  time: "Dinner",
-                  onchangedCallback: (value) {
-                    Dinner = value;
-                    print(value);
-                  },
-                ),
+              Incrementor(
+                time: "Dinner Dosage",
+                onchangedCallback: (value) {
+                  Dinner = value;
+                  print(value);
+                },
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -271,11 +263,13 @@ class _PrescriptionState extends State<Prescription> {
               TextButton(
                 onPressed: () {
                   var oneDrug = Drugs(
+                    rxidFK: 5,
                       name: drugsctrl.text.isEmpty ? "NO DRG" : drugsctrl.text,
-                      type: type == "Type" ? "NO Type" : type,
-                      comapny: company == "Company" ? "No Compnay" : company,
+                      type: type == "Type" ? "Any Type" : type,
+                      company: company == "Company" ? "Any Company" : company,
                       method: "B$Breakfast/L$Lunch/D$Dinner",
                       note: controllerForNote.text.isEmpty ? "No Note" : controllerForNote.text);
+
                   AllDrugs.add(oneDrug);
                   drugsctrl.text = "";
                   type = "Type";
@@ -303,7 +297,14 @@ class _PrescriptionState extends State<Prescription> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+
+                  var rx=PrescriptionData(RxHaveDrugs: AllDrugs, rxid: 5, rxDate: DateTime.now().toString(), DocUName: "jani", PharmacyUName: "sardar", PatientUName: "bugti", rxStatus: 1);
+                  ApiHandler().postrx("emr", "setrx", rx);
+                  
+                  
+                  
+                },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -97,9 +97,9 @@ class _AllDrugsScreenState extends State<AllDrugsScreen> {
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                     child: ListTile(
                       leading: FaIcon(FontAwesomeIcons.pills,size: 30,),
-                      title: Text("${data[index].name} ${data[index].comapny }"),
-                      subtitle: Text("${data[index].type} ${data[index].method }"),
-                      trailing: Text("${data[index].note}"),
+                      title: Text("${data[index].name} • ${data[index].company }"),
+                      subtitle: Text("${data[index].type} • ${data[index].note} "),
+                      trailing: Text("[${data[index].method }]"),
                     ),
                   ),
                 ),
@@ -111,11 +111,18 @@ class _AllDrugsScreenState extends State<AllDrugsScreen> {
     else
       {
         return Scaffold(
-          appBar: AppBar(title: Text("NO Drugs Added"),centerTitle: true,),
-          body: Center(
-            child: Container(
-              child: Mywidgets.getLottie(path: "assets/animations/pharmacist.json"),
-            ),
+          appBar: AppBar(title: Text("Added Drugs"),centerTitle: true,),
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                child: Mywidgets.getLottie(path: "assets/animations/pharmacist.json"),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Text('NO DRUGS ADDED',style: TextStyle(fontSize: 25),),
+              ),
+            ],
           ),
         );
       }
