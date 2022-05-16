@@ -27,6 +27,7 @@ class _AllDrugsScreenState extends State<AllDrugsScreen> {
 
 
     var con=ScrollController();
+
     if(!widget.drgs.isEmpty)
       {
         
@@ -126,8 +127,8 @@ class _AllDrugsScreenState extends State<AllDrugsScreen> {
           ),
         );
       }
-    
-    
-    
+
   }
 }
+
+

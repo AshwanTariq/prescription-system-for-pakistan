@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:rxpakistan/doctor/doctor_main_screen.dart';
 import 'package:rxpakistan/signup_page.dart';
+import 'package:rxpakistan/widgets/custom_widgets.dart';
 
 import 'doctor/create_prescripton.dart';
 
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Prescription(),
+      home: DumyPage(),
     );
   }
 }

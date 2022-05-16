@@ -1,8 +1,10 @@
 import 'dart:async';
+
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../widgets/custom_widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,73 +17,72 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-
-  Completer<GoogleMapController> _controller = Completer();
-
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
-
-  static final CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
-
-
-
+  TextEditingController username = TextEditingController();
+  TextEditingController password = TextEditingController();
+  TextEditingController Name = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: Mywidgets.getAppBar("Doctor Signup"),
+      appBar: Mywidgets.getAppBar("Signup"),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        children:  [
-          TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Username',
+        children: [
+          CustomTextField(
+            hint: 'Username',
+            prefix: FaIcon(FontAwesomeIcons.user),
+            con: username,
+            obscure: false,
+          ),
+          CustomTextField(
+            hint: 'Password',
+            prefix: FaIcon(FontAwesomeIcons.lock),
+            con: password,
+            obscure: true,
+          ),
+          CustomTextField(
+            hint: 'Full Name',
+            con: Name,
+            prefix: FaIcon(FontAwesomeIcons.person),
+            obscure: false,
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return CustomGoogleMaps(
+                  getlatlong: (lat, long) {
+                    print("latit tude is  $lat , $long");
+                  },
+                );
+              }));
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                width: 210,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.amber,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    FaIcon(FontAwesomeIcons.map),
+                    Text('Add Address'),
+                  ],
+                ),
+              ),
             ),
           ),
-          TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Password',
-            ),
-          ),
-          TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Confirm Password',
-            ),
-          ),
-          TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Name',
-            ),
 
-          ),
-          Container(
-            color: Colors.pink,
-            width: 400,
-            height: 400,
-            child: GoogleMap(
-              onTap: (value){
-                print(value);
-              },
-              mapType: MapType.hybrid,
-              initialCameraPosition: _kGooglePlex,
-              onMapCreated: (GoogleMapController controller) {
 
-                _controller.complete(controller);
+          ElevatedButton(
+              onPressed: () {
+                print("${username.text} ${Name.text} ${password.text}");
               },
-            ),
-          ),
-          ElevatedButton(onPressed: (){}, child: Text('Signup'))
+              child: Text('Signup')),
         ],
       ),
     );

@@ -52,9 +52,10 @@ class PrescriptionData
   var PharmacyUName;
   var PatientUName;
   int rxStatus=-1;
+  int rxRefil;
   PrescriptionData({required this.RxHaveDrugs,required this.rxid,
     required this.rxDate,required this.DocUName,
-    required this.PharmacyUName,required this.PatientUName,required this.rxStatus});
+    required this.PharmacyUName,required this.PatientUName,required this.rxStatus,required this.rxRefil});
   Map toJson()=>{
     'RxHaveDrugs': RxHaveDrugs,
     'rxid': rxid,
@@ -63,6 +64,7 @@ class PrescriptionData
     'PharmacyUName': PharmacyUName,
     'PatientUName': PatientUName,
     'rxStatus':rxStatus,
+    'rxRefil':rxRefil,
   };
 }
 
