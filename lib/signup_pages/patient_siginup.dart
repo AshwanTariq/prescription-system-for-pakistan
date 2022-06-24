@@ -5,28 +5,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:group_radio_button/group_radio_button.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import '../apihandler.dart';
 import '../patinet/patient_model_file.dart';
 import '../widgets/custom_widgets.dart';
 
-class PatientsMiniEMR extends StatefulWidget {
-  const PatientsMiniEMR({Key? key}) : super(key: key);
+class PatientSignUpPage extends StatefulWidget {
+  const PatientSignUpPage({Key? key}) : super(key: key);
 
   @override
-  _PatientsMiniEMRState createState() => _PatientsMiniEMRState();
+  _PatientSignUpPageState createState() => _PatientSignUpPageState();
 }
 
-class _PatientsMiniEMRState extends State<PatientsMiniEMR> {
+class _PatientSignUpPageState extends State<PatientSignUpPage> {
   final RoundedLoadingButtonController _btnPatient =
-      RoundedLoadingButtonController();
+  RoundedLoadingButtonController();
 
   String _verticalGroupValue = "Female";
 
   List<String> allDisease = [];
   List<String> _status = ["Female", "Male", "Other"];
   final conName = TextEditingController();
+  final conPassword = TextEditingController();
+  final conUsername = TextEditingController();
   var UserName;
   List<String> diseasel1 = [
     "Diabetes",
@@ -80,21 +83,22 @@ class _PatientsMiniEMRState extends State<PatientsMiniEMR> {
     //List<String> list=await apiHandler.getAllDrugs("emr", "getAllDrugs");
 
     if(conName.text.isEmpty || lat ==0.0||lng==0.0) {
-        _btnPatient.error();
-        Future.delayed(Duration(seconds: 3), () {
-          _btnPatient.reset();
+      _btnPatient.error();
+      Future.delayed(Duration(seconds: 3), () {
+        _btnPatient.reset();
       });
     }else{
 
-      UserName=genrateUsername(conName.text);
+      UserName=conUsername.text;
       var Patient = PatientData(
         long:lng,
-        password: 123,
+        role: 1,
+        password: conPassword.text,
         lat: lat,
         username: UserName,
         Name: conName.text,
         gender: getGender(_verticalGroupValue),
-        disease: allDisease.join(""), role: 2,
+        disease: allDisease.join(""),
       );
       bool chk = await ApiHandler().postPatient("emr", "setPatinet", Patient);
       if (chk) {
@@ -106,7 +110,7 @@ class _PatientsMiniEMRState extends State<PatientsMiniEMR> {
         Future.delayed(Duration(seconds: 3), () {
           _btnPatient.reset();
         });
-        }
+      }
 
     }
   }
@@ -117,20 +121,26 @@ class _PatientsMiniEMRState extends State<PatientsMiniEMR> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Patient EMR"),
+        title: Text("Patient Signup"),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Lottie.asset("assets/animations/login.json"),
+        ),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 50,
-          ),
-          FaIcon(
-            FontAwesomeIcons.userInjured,
-            size: 120,
-          ),
-          SizedBox(
-            height: 50,
+
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              textCapitalization: TextCapitalization.sentences,
+              controller: conUsername,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(FontAwesomeIcons.userLock),
+                hintText: "username",
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -139,7 +149,18 @@ class _PatientsMiniEMRState extends State<PatientsMiniEMR> {
               controller: conName,
               decoration: const InputDecoration(
                 prefixIcon: Icon(FontAwesomeIcons.user),
-                hintText: "Patient's Name",
+                hintText: "Full Name",
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              textCapitalization: TextCapitalization.sentences,
+              controller: conPassword,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(FontAwesomeIcons.lock),
+                hintText: "Password",
               ),
             ),
           ),
@@ -235,19 +256,19 @@ class _PatientsMiniEMRState extends State<PatientsMiniEMR> {
           ),
           ElevatedButton(onPressed: (){
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return CustomGoogleMaps(
-              getlatlong: (latit, long) {
-                lat=latit;
-                lng=long;
-                print("LATITTUDE AND LOGITUDE is  $lat , $lng");
-              },
-            );
-          }));},child: Text("GET ADDRESS"),),
+              return CustomGoogleMaps(
+                getlatlong: (latit, long) {
+                  lat=latit;
+                  lng=long;
+                  print("LATITTUDE AND LOGITUDE is  $lat , $lng");
+                },
+              );
+            }));},child: Text("GET ADDRESS"),),
           SizedBox(
             height: 10,
           ),
           RoundedLoadingButton(
-            child: Text("Add"),
+            child: Text("Signup"),
             controller: _btnPatient,
             onPressed: _doSomething,
           ),

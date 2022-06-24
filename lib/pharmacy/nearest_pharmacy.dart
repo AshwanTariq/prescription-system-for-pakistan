@@ -77,11 +77,13 @@ class _NearPlacesState extends State<NearPlaces> {
    
   }
   double getDistanceInKm(dynamic user){
+
+    print("$lat\n\n\n\n $long");
      double sLat=user["lat"] as double;
      double sLong=user["long"] as double;
     final double distance = Geolocator.distanceBetween(lat,long,
         sLat, sLong);
-    print(distance.toString());
+
 
    return distance * 0.001; //distance in meters
   }
@@ -113,6 +115,7 @@ class _NearPlacesState extends State<NearPlaces> {
             if(panelController.isPanelOpen){
               panelController.close();
             }
+            print("$lat $long");
             setState(() {});
             mapController.animateCamera(
                 CameraUpdate.newLatLngZoom(
@@ -179,6 +182,10 @@ class _NearPlacesState extends State<NearPlaces> {
                           ));
                           double dis= getDistanceInKm(snapshot.data[index]).floorToDouble();
 
+
+
+
+
                           return Card(
                             elevation: 6,
                             child: Column(
@@ -193,25 +200,20 @@ class _NearPlacesState extends State<NearPlaces> {
                                     height: 40,
                                     child: RoundedLoadingButton(controller: _btnController, onPressed: ()async {
                                       print("Sending prescription");
-                                      widget.rxfinal.PharmacyUName=snapshot.data[index]["username"];
+                                      widget.rxfinal.PharmacyUName=snapshot.data[index]["username"].toString();
                                       await ApiHandler().postrx("emr", "setrx", widget.rxfinal).then((value) {
+                                        print("IN THEN OF POST RX $value");
                                         if(value){
                                           _btnController.success();
-                                          Future.delayed(Duration(seconds: 2));
-                                          //_btnController.reset();
-                                          //Future.delayed(Duration(seconds: 2));
-                                          //Navigator.pop(context);
                                         }else{
-                                          _btnController.error();
-                                          //Future.delayed(Duration(seconds: 2));
-                                          //_btnController.reset();
+                                          _btnController.reset();
                                         }
                                       }).catchError((error){
                                         _btnController.error();
                                       });
                                     }, child: Icon(FontAwesomeIcons.paperPlane),),
                                   ),
-                                  title: Text("${_name(snapshot.data[index])} • ${(dis-5000).abs()}km"),
+                                  title: Text("${_name(snapshot.data[index])} • ${dis.abs()}km"),
                                   subtitle: Text(_address(snapshot.data[index]),),
                                   trailing: _rating(snapshot.data[index]),
                                   onTap: () {

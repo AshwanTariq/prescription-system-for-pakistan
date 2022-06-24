@@ -9,14 +9,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../widgets/custom_widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class SignUp extends StatefulWidget {
-  const SignUp({Key? key}) : super(key: key);
+class SignUpPatient extends StatefulWidget {
+  const SignUpPatient({Key? key}) : super(key: key);
 
   @override
-  _SignUpState createState() => _SignUpState();
+  _SignUpPatientState createState() => _SignUpPatientState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignUpPatientState extends State<SignUpPatient> {
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController Name = TextEditingController();
@@ -25,7 +25,7 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: Mywidgets.getAppBar("Signup"),
+      appBar: Mywidgets.getAppBar("SignUpPatient"),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -63,12 +63,11 @@ class _SignUpState extends State<SignUp> {
                 width: 210,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.amber,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
+                  children: const[
                     FaIcon(FontAwesomeIcons.map),
                     Text('Add Address'),
                   ],
@@ -82,7 +81,7 @@ class _SignUpState extends State<SignUp> {
               onPressed: () {
                 print("${username.text} ${Name.text} ${password.text}");
               },
-              child: Text('Signup')),
+              child: Text('Sign Up')),
         ],
       ),
     );

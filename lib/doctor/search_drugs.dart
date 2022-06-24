@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rxpakistan/apihandler.dart';
 import 'package:rxpakistan/widgets/custom_widgets.dart';
 
+
 class SearchDrugs extends StatefulWidget {
   SearchDrugs({Key? key, required this.con,required this.disease}) : super(key: key);
 
@@ -23,8 +24,10 @@ class _SearchDrugsState extends State<SearchDrugs> {
   bool loadingFlag = true;
   late bool _isSearching;
   String _searchText = "";
+  bool flagContraindication=false;
 
   var api = ApiHandler();
+
   _SearchListExampleState() {
     widget.con.addListener(() {
       if (widget.con.text.isEmpty) {
@@ -45,7 +48,7 @@ class _SearchDrugsState extends State<SearchDrugs> {
     });
   }
 
-  Future<bool> _chkSelectdDrug(String value) async =>value==null?false:true;
+  //Future<bool> _chkSelectdDrug(String value) async =>value==null?false:true;
   bool chkDrugToDiseaseContra(String allDiseaseUser,String allDiseaseContra)
   {
     bool flag=false;
@@ -70,6 +73,7 @@ class _SearchDrugsState extends State<SearchDrugs> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _isSearching = false;
     //_handleSearchStart();
     _SearchListExampleState();
@@ -77,6 +81,7 @@ class _SearchDrugsState extends State<SearchDrugs> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -113,38 +118,53 @@ class _SearchDrugsState extends State<SearchDrugs> {
                             searchresult[index]["DName"].toString();
                         String ldate =
                             searchresult[index]["ExpDate"].toString();
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            elevation: 3,
-                            shadowColor: Colors.green,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                            child: Column(
-                              children: <Widget>[
-                                ListTile(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  title: Text(drgname.toString()),
-                                  subtitle: Text('EXP Date :: $ldate'),
-                                  trailing: IconButton(
-                                      onPressed: () {
-                                        widget.con.text = drgname;
-                                        if(chkDrugToDiseaseContra(widget.disease,searchresult[index]["ConDisease"]))
-                                          {
-                                            Mywidgets.ShowContraindication(context);
-                                          }
-                                        //Navigator.pop(context);
-                                      },
-                                      icon: const Icon(
-                                        FontAwesomeIcons.add,
-                                        color: Colors.green,
-                                      )),
-                                )
-                              ],
+
+                        if(!chkDrugToDiseaseContra(widget.disease,searchresult[index]["ConDisease"].toString())) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              elevation: 3,
+                              shadowColor: Colors.green,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                title: Text(drgname.toString()),
+                                subtitle: Text('EXP Date :: $ldate'),
+                                trailing: IconButton(
+                                    onPressed: () {
+                                      widget.con.text = drgname;
+
+                                      //Navigator.pop(context);
+                                    },
+                                    icon: const Icon(
+                                      FontAwesomeIcons.add,
+                                      color: Colors.green,
+                                    )),
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        }else{
+                          return Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
+                            child: Card(
+                              elevation: 6,
+                              shadowColor: Colors.redAccent,
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                title: Text("${drgname.toString()} CONTRAINDICATED"),
+                                subtitle: Text('EXP Date :: $ldate'),
+                                trailing: const Icon(
+                                  FontAwesomeIcons.x,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+
                       },
                     )
                   : ListView.builder(
@@ -152,43 +172,63 @@ class _SearchDrugsState extends State<SearchDrugs> {
                       itemCount: snapshot.data.length,
                       itemBuilder: (BuildContext context, int index) {
                         //_list.add(snapshot.data[index]);
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            elevation: 3,
-                            shadowColor: Colors.green,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                            child: Column(
-                              children: <Widget>[
-                                ListTile(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  title: Text(
-                                      snapshot.data[index]["DName"].toString()),
-                                  subtitle: Text(
-                                      'EXP Date :: ${snapshot.data[index]["ExpDate"]}'),
-                                  trailing: IconButton(
-                                      onPressed: () {
-                                        widget.con.text = snapshot.data[index]
-                                                ["DName"]
-                                            .toString();
-                                        if(chkDrugToDiseaseContra(widget.disease,snapshot.data[index]["ConDisease"]))
-                                        {
-                                          Mywidgets.ShowContraindication(context);
-                                        }
+                        if(!chkDrugToDiseaseContra(widget.disease,snapshot.data[index]["ConDisease"].toString())) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              elevation: 3,
+                              shadowColor: Colors.green,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Column(
+                                children: <Widget>[
+                                  ListTile(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20)),
+                                    title: Text(
+                                        snapshot.data[index]["DName"].toString()),
+                                    subtitle: Text(
+                                        'EXP Date :: ${snapshot.data[index]["ExpDate"]}'),
+                                    trailing: IconButton(
+                                        onPressed: () {
+                                          widget.con.text = snapshot.data[index]
+                                          ["DName"]
+                                              .toString();
 
-                                        //Navigator.pop(context);
-                                      },
-                                      icon: const Icon(
-                                        FontAwesomeIcons.add,
-                                        color: Colors.green,
-                                      )),
-                                )
-                              ],
+
+                                          //Navigator.pop(context);
+                                        },
+                                        icon: const Icon(
+                                          FontAwesomeIcons.add,
+                                          color: Colors.green,
+                                        )),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        }else{
+                          return Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
+                            child: Card(
+                              elevation: 6,
+                              shadowColor: Colors.redAccent,
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                                title: Text("${snapshot.data[index]["DName"].toString()} CONTRAINDICATED"),
+                                subtitle: Text(
+                                    'EXP Date :: ${snapshot.data[index]["ExpDate"]}'),
+                                trailing: const Icon(
+
+                                  FontAwesomeIcons.x,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+
                       });
             } else {
               return Center(child: CircularProgressIndicator());

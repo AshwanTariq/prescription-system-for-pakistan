@@ -44,15 +44,8 @@ class _AllDrugsScreenState extends State<AllDrugsScreen> {
                 padding: const EdgeInsets.all(10.0),
                 child: Slidable(
                   startActionPane: ActionPane(
-                    // A motion is a widget used to control how the pane animates.
                     motion: const ScrollMotion(),
-
-                    // A pane can dismiss the Slidable.
-                    //dismissible: DismissiblePane(onDismissed: () {}),
-
                     key: const ValueKey(0),
-
-                    // All actions are defined in the children parameter.
                     children:  [
                       // A SlidableAction can have an icon and/or a label.
                       SlidableAction(

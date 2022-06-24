@@ -24,6 +24,35 @@ class DrugsName {
 }
 
 class Mywidgets {
+  static Drawer getDrawer(BuildContext con, String value) {
+    return Drawer(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 30,
+          ),
+          Mywidgets.getLottie(path: "assets/animations/commonuser.json"),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Hello ${value.toUpperCase()} !",
+              style: Theme.of(con).textTheme.headline2,
+            ),
+          ),
+          ListTile(
+              title: Text("Logout"),
+              leading: IconButton(
+                  onPressed: () {
+                    Navigator.pop(con);
+                    Navigator.pop(con);
+                  },
+                  icon: FaIcon(FontAwesomeIcons.signOut)))
+        ],
+      ),
+    );
+  }
+
   static void ShowDisease(BuildContext context, String list) {
     List<String> data = list.split("?");
     List<Widget> txt = [];
@@ -189,7 +218,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   Completer<GoogleMapController> _controller = Completer();
 
   static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(33.5651, 73.0169),
+    target: LatLng(33.738045, 73.084488),
     zoom: 14.4746,
   );
 
@@ -198,21 +227,47 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pop(context);
+
+          showDialog(
+              context: context,
+              builder: (context) {
+                return Container(
+                  width: 200,
+                  height: 200,
+                  child:const Padding(
+                    padding:EdgeInsets.all(18.0),
+                    child: const Center(
+                      child: Card(
+                        elevation: 2,
+                        shadowColor: Colors.black54,
+                        child: Text("LOCATION ADDED"),
+                      ),
+                    ),
+                  ),
+                );
+              });
+        },
+        child: Icon(FontAwesomeIcons.check),
+      ),
       body: GoogleMap(
+
         markers: _markers,
         onTap: (value) {
           _markers = {};
           _markers.add(gmap.Marker(
               markerId: MarkerId(value.toString()),
               position: value,
-              infoWindow: InfoWindow(
-                title: '$value',
+              infoWindow: const InfoWindow(
+                title: 'Your Location',
               )));
           print(value);
           widget.getlatlong.call(value.latitude, value.longitude);
           setState(() {});
         },
-        mapType: MapType.hybrid,
+        mapType: MapType.normal,
         initialCameraPosition: _kGooglePlex,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
@@ -250,31 +305,83 @@ class CustomTextField extends StatelessWidget {
 }
 
 class DumyPage extends StatelessWidget {
-  const DumyPage({Key? key}) : super(key: key);
+  DumyPage({Key? key}) : super(key: key);
 
+  var controllerphr = TextEditingController();
+  var controllerdoc = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("DUMY PAGE FOR DEMO"),
+        centerTitle: true,
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => DocHomePage()));
-                },
-                child: Text('Doctor')),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AllPrescription(
-                                pharmacyUname: "sardar",
-                              )));
-                },
-                child: Text('Pharmacy')),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  width: 300,
+                  child: TextField(
+                    controller: controllerdoc,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.search,
+                      ),
+                      hintText: "Enter Doctor username  ...",
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      if (controllerdoc.text.isNotEmpty) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DocHomePage(
+                                      docName: controllerdoc.text,
+                                    )));
+                      }
+                    },
+                    child: Icon(FontAwesomeIcons.userDoctor)),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  width: 300,
+                  child: TextField(
+                    controller: controllerphr,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.search,
+                      ),
+                      hintText: "Enter Pharmacy username  ...",
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (controllerphr.text.isNotEmpty) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AllPrescription(
+                                    pharmacyUname: controllerphr.text,
+                                  )));
+                    }
+                  },
+                  child: Icon(FontAwesomeIcons.hospital),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -285,7 +392,7 @@ class DumyPage extends StatelessWidget {
 class MyListtile extends StatelessWidget {
   MyListtile(
       {Key? key,
-        required this.RxDetails,
+      required this.RxDetails,
       required this.title,
       required this.subtitle,
       required this.rxid,
@@ -329,8 +436,7 @@ class MyListtile extends StatelessWidget {
             title.toString(),
             style: TextStyle(fontSize: 20),
           ),
-          subtitle: Text(subtitle.toString().toString(),
-              style: TextStyle(fontSize: 14)),
+          subtitle: Text(subtitle.toString(), style: TextStyle(fontSize: 14)),
           trailing: SizedBox(
             width: 50,
             height: 50,
@@ -358,15 +464,18 @@ class MyListtile extends StatelessWidget {
                                       rxid: rxid,
                                       Docname: Docname,
                                       Patientdetails: PatientData(
+                                        role: 1,
                                         username: value[0].toString(),
                                         lat: lat,
                                         long: long,
                                         password: "",
-                                        disease: '',
+                                        disease: subtitle
+                                            .toString()
+                                            .replaceAll(",", "?"),
                                         Name: "",
                                         gender: "",
                                       ),
-                                    )));
+                                    ))).whenComplete(() => _btnController.reset());
                       });
                     },
                   )
@@ -375,11 +484,18 @@ class MyListtile extends StatelessWidget {
                     height: 1,
                   ),
           ),
-          onTap: flag ==false?(){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>AllDrugsInPharmacy(data: RxDetails,)));
-          }:(){
-
-          },
+          onTap: flag == false
+              ? () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AllDrugsInPharmacy(
+                                data: RxDetails,
+                              )));
+                }
+              : () {
+                  print("FLAG TRUE");
+                },
         ),
       ),
     );
@@ -394,26 +510,23 @@ class CustomDiseaseBox extends StatelessWidget {
   final Function(String) isSelected;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(2.0),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(data),
-          ),
-          RoundCheckBox(
-            size: 30,
-            onTap: (selected) {
-              if (selected == true) {
-                isSelected.call("${data}?");
-              } else {
-                print("${data} Not Selected");
-              }
-            },
-          ),
-        ],
-      ),
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(data),
+        ),
+        RoundCheckBox(
+          size: 30,
+          onTap: (selected) {
+            if (selected == true) {
+              isSelected.call("${data}?");
+            } else {
+              print("${data} Not Selected");
+            }
+          },
+        ),
+      ],
     );
   }
 }

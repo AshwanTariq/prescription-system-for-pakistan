@@ -21,13 +21,13 @@ import 'add_patients_details.dart';
 import 'doctor_model_file.dart';
 
 class Prescription extends StatefulWidget {
-  Prescription(
-      {Key? key,
-      required this.show,
-      required this.Patientdetails,
-      required this.Docname,
-      required this.rxid,})
-      : super(key: key);
+  Prescription({
+    Key? key,
+    required this.show,
+    required this.Patientdetails,
+    required this.Docname,
+    required this.rxid,
+  }) : super(key: key);
 
   bool show;
   PatientData Patientdetails;
@@ -41,10 +41,12 @@ class _PrescriptionState extends State<Prescription> {
   //var drugsctrl = TextEditingController();
   var searchDrugs = TextEditingController();
   final _btnController = RoundedLoadingButtonController();
+  final _btnControllerFordugs = RoundedLoadingButtonController();
 
   String description = '';
   TextEditingController controllerForNote = TextEditingController();
 
+  var api = ApiHandler();
   List<Drugs> AllDrugs = [];
   String? company = "Company";
   String? type = "Type";
@@ -54,7 +56,6 @@ class _PrescriptionState extends State<Prescription> {
   var refilCon = TextEditingController();
   late bool showButton;
   late PatientData PatientDetails;
-
 
   List<String> autoCompleteTypes = <String>[
     "Capsule",
@@ -83,6 +84,21 @@ class _PrescriptionState extends State<Prescription> {
     /*var formatter = DateFormat('yyyy-MM-dd');
     String formattedDate = formatter.format(now);*/
     return now;
+  }
+
+  bool chkDrugToDrugContra(List<String> alldrugsUser, String allDrugsContra) {
+    bool flag = false;
+    List<String> Udis = alldrugsUser;
+    List<String> Cdis = allDrugsContra.split("?");
+    Udis.forEach((userDIS) {
+      Cdis.forEach((contraDIS) {
+        if (userDIS == contraDIS) {
+          print("DRUG TO DISEASE CONTRAINDICATION");
+          flag = true;
+        }
+      });
+    });
+    return flag;
   }
 
   @override
@@ -124,19 +140,15 @@ class _PrescriptionState extends State<Prescription> {
                   children: [
                     ElevatedButton(
                         onPressed: () async {
-                          Future<bool> chk = await Navigator.push(
+                          await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => SearchDrugs(
-                                con: searchDrugs, disease:PatientDetails.disease,
+                                con: searchDrugs,
+                                disease: PatientDetails.disease,
                               ),
                             ),
                           );
-                          if (chk == true) {
-                            print("Ok");
-                          } else {
-                            print("notok");
-                          }
                         },
                         child: Text("Select Drug")),
                     showButton
@@ -148,6 +160,8 @@ class _PrescriptionState extends State<Prescription> {
                                   builder: (context) => PatientsMiniEMR(),
                                 ),
                               );
+                              print(
+                                  "LAT IN PATIENT IN RX${PatientDetails.lat} \nLONG IN PATIENT  IN RX${PatientDetails.long}");
 
                               setState(() {
                                 showButton = false;
@@ -156,7 +170,7 @@ class _PrescriptionState extends State<Prescription> {
                             child: Text("ADD PATIENT DETAILS"),
                           )
                         : Text(
-                            "For ${PatientDetails.Name}",
+                            "For ${PatientDetails.username}",
                             style: TextStyle(fontSize: 25),
                           )
                   ],
@@ -242,10 +256,13 @@ class _PrescriptionState extends State<Prescription> {
               onPressed: () {
                 var oneDrug = Drugs(
                     rxidFK: widget.rxid,
-                    name:
-                        searchDrugs.text.isEmpty ? "NO DRG" : searchDrugs.text,
+                    name: searchDrugs.text.isEmpty
+                        ? "NO DRG"
+                        : searchDrugs.text,
                     type: type == "Type" ? "Any Type" : type,
-                    company: company == "Company" ? "Any Company" : company,
+                    company: company == "Company"
+                        ? "Any Company"
+                        : company,
                     method: "B$Breakfast/L$Lunch/D$Dinner",
                     note: controllerForNote.text.isEmpty
                         ? "No Note"
@@ -260,12 +277,15 @@ class _PrescriptionState extends State<Prescription> {
                 Dinner = 0;
                 controllerForNote.text = "";
 
-                print(AllDrugs.length);
 
                 setState(() {});
+
+
               },
+
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: const [
                   FaIcon(
                     FontAwesomeIcons.plus,
@@ -275,8 +295,8 @@ class _PrescriptionState extends State<Prescription> {
                   ),
                   Text('Add Drug'),
                 ],
-              ),
-            ),
+              ),),
+
             RoundedLoadingButton(
               width: 240,
               child: Row(
@@ -312,17 +332,15 @@ class _PrescriptionState extends State<Prescription> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => NearPlaces(
-                            lat: PatientDetails.lat,
-                            long: PatientDetails.long,
-                            rxfinal: rx,
-                          )));
-                }else{
+                                lat: PatientDetails.lat,
+                                long: PatientDetails.long,
+                                rxfinal: rx,
+                              )));
+                } else {
                   _btnController.error();
                   Future.delayed(Duration(seconds: 2));
                   _btnController.reset();
-
                 }
-
               },
             ),
           ],
@@ -338,6 +356,32 @@ class _PrescriptionState extends State<Prescription> {
     );
   }
 }
+
+
+
+
+
+/*
+List<dynamic> temp = snapshot.data;
+List<String> drugs = [];
+for (int index = 0; index < AllDrugs.length; index++) {
+drugs.add(AllDrugs[index].name);
+if (chkDrugToDrugContra(drugs,
+temp[index]["ConDrugs"].toString()) &&
+AllDrugs.isNotEmpty) {
+Mywidgets.ShowContraindication(context);_btnControllerFordugs.reset();
+}*/
+
+
+
+
+
+
+
+
+
+
+
 
 /*Autocomplete(
 optionsBuilder: (TextEditingValue textEditingValue) {
