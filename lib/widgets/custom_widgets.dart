@@ -67,12 +67,13 @@ class Mywidgets {
     ).show();
   }
 
-  static void ShowContraindication(BuildContext context) {
+  static void ShowContraindication(BuildContext context,RoundedLoadingButtonController con) {
     AwesomeDialog(
       context: context,
+      dismissOnTouchOutside: false,
       dialogType: DialogType.INFO,
       animType: AnimType.BOTTOMSLIDE,
-      btnOkOnPress: () {},
+      btnOkOnPress: () =>con.reset(),
       title: 'Contraindication',
       desc:
           " You Can Not insert this Drug \nit Can give side effects to the Patient.",

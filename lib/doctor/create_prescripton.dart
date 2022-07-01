@@ -48,6 +48,7 @@ class _PrescriptionState extends State<Prescription> {
 
   var api = ApiHandler();
   List<Drugs> AllDrugs = [];
+  List<String> drugsName=[];
   String? company = "Company";
   String? type = "Type";
   int Breakfast = 0;
@@ -252,37 +253,99 @@ class _PrescriptionState extends State<Prescription> {
             RefilWidget(
               con: refilCon,
             ),
-            TextButton(
-              onPressed: () {
-                var oneDrug = Drugs(
-                    rxidFK: widget.rxid,
-                    name: searchDrugs.text.isEmpty
-                        ? "NO DRG"
-                        : searchDrugs.text,
-                    type: type == "Type" ? "Any Type" : type,
-                    company: company == "Company"
-                        ? "Any Company"
-                        : company,
-                    method: "B$Breakfast/L$Lunch/D$Dinner",
-                    note: controllerForNote.text.isEmpty
-                        ? "No Note"
-                        : controllerForNote.text);
+            RoundedLoadingButton(
+              controller: _btnControllerFordugs,
+              onPressed: () async {
+                if (searchDrugs.text.isEmpty) {
+                  _btnControllerFordugs.reset();
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Please Prescribe Drug First ",
+                            style: Theme.of(context).textTheme.headline3,
+                          ),
+                        ),);
 
-                AllDrugs.add(oneDrug);
-                searchDrugs.text = "";
-                type = "Type";
-                company = "Company";
-                Breakfast = 0;
-                Lunch = 0;
-                Dinner = 0;
-                controllerForNote.text = "";
+                      });
+                } else {
+                  if (AllDrugs.length > 0) {
+
+                    drugsName=[];
+                    AllDrugs.forEach((element) {drugsName.add(element.name);});
+                    String dnames=drugsName.join('?');
+                    Mywidgets.ShowContraindication(
+                        context, _btnControllerFordugs);
+                    print("\nBefore Api call Vale of name = ${dnames}");
+                   dynamic flag= await api
+                        .chkDrugToDrug(dnames, "emr", "chkDrugToDrug")
+                        .then((value) {
+                     print("value of then $value");
+                      if (value == true) {
+
+                        Mywidgets.ShowContraindication(
+                            context, _btnControllerFordugs);
+
+                      } else {
+
+                        var oneDrug = Drugs(
+                            rxidFK: widget.rxid,
+                            name: searchDrugs.text.isEmpty
+                                ? "NO DRG"
+                                : searchDrugs.text,
+                            type: type == "Type" ? "Any Type" : type,
+                            company: company == "Company" ? "Any Company" : company,
+                            method: "B$Breakfast/L$Lunch/D$Dinner",
+                            note: controllerForNote.text.isEmpty
+                                ? "No Note"
+                                : controllerForNote.text);
+
+                        AllDrugs.add(oneDrug);
+                        searchDrugs.text = "";
+                        type = "Type";
+                        company = "Company";
+                        Breakfast = 0;
+                        Lunch = 0;
+                        Dinner = 0;
+                        controllerForNote.text = "";
+
+                        setState(() {});
+                        _btnControllerFordugs.reset();
+                      }
+                    });
+                   flag==false?print("\n\n Value of flag FALSE\n\n"):print('\n\n value of flag TRUE\n\n');
+                  } else {
+                    var oneDrug = Drugs(
+                        rxidFK: widget.rxid,
+                        name: searchDrugs.text.isEmpty
+                            ? "NO DRG"
+                            : searchDrugs.text,
+                        type: type == "Type" ? "Any Type" : type,
+                        company: company == "Company" ? "Any Company" : company,
+                        method: "B$Breakfast/L$Lunch/D$Dinner",
+                        note: controllerForNote.text.isEmpty
+                            ? "No Note"
+                            : controllerForNote.text);
+
+                    AllDrugs.add(oneDrug);
+                    searchDrugs.text = "";
+                    type = "Type";
+                    company = "Company";
+                    Breakfast = 0;
+                    Lunch = 0;
+                    Dinner = 0;
+                    controllerForNote.text = "";
+
+                    setState(() {});
+                    _btnControllerFordugs.reset();
+                  }
 
 
-                setState(() {});
 
-
+                }
               },
-
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -295,8 +358,9 @@ class _PrescriptionState extends State<Prescription> {
                   ),
                   Text('Add Drug'),
                 ],
-              ),),
-
+              ),
+            ),
+            SizedBox(height:5,),
             RoundedLoadingButton(
               width: 240,
               child: Row(
@@ -335,7 +399,7 @@ class _PrescriptionState extends State<Prescription> {
                                 lat: PatientDetails.lat,
                                 long: PatientDetails.long,
                                 rxfinal: rx,
-                              )));
+                              ))).whenComplete(() => _btnController.reset());
                 } else {
                   _btnController.error();
                   Future.delayed(Duration(seconds: 2));
@@ -357,10 +421,6 @@ class _PrescriptionState extends State<Prescription> {
   }
 }
 
-
-
-
-
 /*
 List<dynamic> temp = snapshot.data;
 List<String> drugs = [];
@@ -371,17 +431,6 @@ temp[index]["ConDrugs"].toString()) &&
 AllDrugs.isNotEmpty) {
 Mywidgets.ShowContraindication(context);_btnControllerFordugs.reset();
 }*/
-
-
-
-
-
-
-
-
-
-
-
 
 /*Autocomplete(
 optionsBuilder: (TextEditingValue textEditingValue) {

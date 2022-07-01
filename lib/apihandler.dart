@@ -9,9 +9,15 @@ import 'package:rxpakistan/signup_pages/pharmacy_signup.dart';
 class ApiHandler {
   var dio = Dio();
   final _controllerForlogin="admin";
-  var commonPart = "http://192.168.18.37/rxApi/api/";
+  var commonPart = "http://192.168.201.90/rxApi/api/";
 
   /// PATIENT SIDE OPERATIONS
+
+
+
+
+
+
 
   Future<dynamic> chkLoginDoc(String user, String password) async {
     var apiStringD =
@@ -248,10 +254,27 @@ class ApiHandler {
       return [] as List<String>;
     }
   }
+  Future<bool> chkDrugToDrug(String dname,var controller, var action,) async {
+    var apiStringD = "$commonPart$controller/$action?conDrugsUnSplited=$dname";
+
+    Response rs=await dio.get(apiStringD);
+    if(rs.statusCode==200){
+      if(rs.data){
+        return true;
+      }else{
+        return false;
+      }
+    }else{
+      print("EXCEPTION IN API STATUS CODE IS NOT 200");
+      return false;
+    }
+
+
+  }
 
   Future<dynamic> getAllPharmacy(var controller, var action,
-      Function(bool) loadingFlag, Function(bool) isSheetOpen) async {
-    var apiString = "$commonPart$controller/$action";
+      Function(bool) loadingFlag, Function(bool) isSheetOpen,double latitude,double longitude) async {
+    var apiString = "$commonPart$controller/$action?latitude=$latitude&longitude=$longitude";
     var response = await dio.get(apiString);
     if (response.statusCode == 200) {
       loadingFlag.call(true);

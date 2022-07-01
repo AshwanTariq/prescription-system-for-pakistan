@@ -13,19 +13,19 @@ import 'dart:math' as math;
 import '../doctor/doctor_model_file.dart';
 
 class NearPlaces extends StatefulWidget {
-   NearPlaces({Key? key, required this.lat, required this.long,required this.rxfinal})
+  NearPlaces(
+      {Key? key, required this.lat, required this.long, required this.rxfinal})
       : super(key: key);
 
   final double lat;
   final double long;
- PrescriptionData rxfinal;
+  PrescriptionData rxfinal;
 
   @override
   _NearPlacesState createState() => _NearPlacesState();
 }
 
 class _NearPlacesState extends State<NearPlaces> {
-  String word = 'Park';
   late double lat;
   late double long;
 
@@ -40,22 +40,24 @@ class _NearPlacesState extends State<NearPlaces> {
   TextEditingController textEditingController = TextEditingController();
 
   var api = ApiHandler();
-  var _btnController=RoundedLoadingButtonController();
-
+  var _btnController = RoundedLoadingButtonController();
 
   //final places = GoogleMapsPlaces(apiKey: "AIzaSyCyLKdngx3JW6-27_282lKIWzmW9m46i_8");
-
-
 
   String _name(dynamic user) {
     return user["Name"];
   }
 
+  String _distance(dynamic user) {
+    return user["distance"].toString();
+  }
+
   String _address(dynamic user) {
     return user["address"];
   }
+
   Widget _rating(dynamic user) {
-    double value= user["rating"] as double;
+    double value = user["rating"] as double;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -70,26 +72,22 @@ class _NearPlacesState extends State<NearPlaces> {
           itemSize: 16.0,
           direction: Axis.horizontal,
         ),
-        SizedBox(width: 2,),
+        SizedBox(
+          width: 2,
+        ),
         Text("$value")
       ],
     );
-   
   }
-  double getDistanceInKm(dynamic user){
 
+  double getDistanceInKm(dynamic user) {
     print("$lat\n\n\n\n $long");
-     double sLat=user["lat"] as double;
-     double sLong=user["long"] as double;
-    final double distance = Geolocator.distanceBetween(lat,long,
-        sLat, sLong);
+    double sLat = user["lat"] as double;
+    double sLong = user["long"] as double;
+    final double distance = Geolocator.distanceBetween(lat, long, sLat, sLong);
 
-
-   return distance * 0.001; //distance in meters
+    return distance * 0.001; //distance in meters
   }
-
-
-
 
   @override
   void initState() {
@@ -97,9 +95,6 @@ class _NearPlacesState extends State<NearPlaces> {
     lat = widget.lat;
     long = widget.long;
     print('Lat is $lat and long is $long');
-
-
-
 
     super.initState();
   }
@@ -112,15 +107,13 @@ class _NearPlacesState extends State<NearPlaces> {
         leading: InkWell(
           splashColor: Colors.amber,
           onTap: () {
-            if(panelController.isPanelOpen){
+            if (panelController.isPanelOpen) {
               panelController.close();
             }
             print("$lat $long");
             setState(() {});
             mapController.animateCamera(
-                CameraUpdate.newLatLngZoom(
-                    LatLng(lat, long), 5));
-
+                CameraUpdate.newLatLngZoom(LatLng(lat, long), 5));
           },
           child: const Icon(
             FontAwesomeIcons.locationDot, // add custom icons also
@@ -142,21 +135,22 @@ class _NearPlacesState extends State<NearPlaces> {
               mapController = controller;
             },
           ),
-
           SlidingUpPanel(
             maxHeight: 390.0,
             slideDirection: SlideDirection.UP,
             controller: panelController,
             padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
             panelSnapping: true,
-            borderRadius: BorderRadius.only(topRight: Radius.circular(30),topLeft: Radius.circular(30)),
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(30), topLeft: Radius.circular(30)),
             panel: Container(
               child: FutureBuilder<dynamic>(
-                future: api.getAllPharmacy("pharmacy", "getallpharmacy",(value){
-                  loadingFlag=value;
-                }, (value){
-                  isSheetOpen=value;
-                }),
+                future:
+                    api.getAllPharmacy("pharmacy", "getallpharmacy", (value) {
+                  loadingFlag = value;
+                }, (value) {
+                  isSheetOpen = value;
+                }, lat, long),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   print("Loading falg $loadingFlag");
                   if (snapshot.hasData && loadingFlag) {
@@ -165,73 +159,80 @@ class _NearPlacesState extends State<NearPlaces> {
                         padding: EdgeInsets.all(8),
                         itemCount: snapshot.data.length,
                         itemBuilder: (BuildContext context, int index) {
-                          markers.add(Marker( //add first marker
-                            markerId: MarkerId(
-                                snapshot.data[index]["username"]),
-                            position: LatLng(snapshot
-                                .data[index]["lat"],
-                                snapshot
-                                    .data[index]["long"]),
+                          markers.add(Marker(
+                            //add first marker
+                            markerId:
+                                MarkerId(snapshot.data[index]["username"]),
+                            position: LatLng(snapshot.data[index]["lat"],
+                                snapshot.data[index]["long"]),
                             //position of marker
-                            infoWindow: InfoWindow( //popup info
+                            infoWindow: InfoWindow(
+                              //popup info
                               title: _name(snapshot.data[index]),
                               snippet: _address(snapshot.data[index]),
                             ),
                             icon: BitmapDescriptor
                                 .defaultMarker, //Icon for Marker
                           ));
-                          double dis= getDistanceInKm(snapshot.data[index]).floorToDouble();
-
-
-
-
+                          //double dis= getDistanceInKm(snapshot.data[index]).floorToDouble();
 
                           return Card(
                             elevation: 6,
                             child: Column(
                               children: <Widget>[
-
                                 ///MISSING IF CONDITION HERE FOR NEAREST PHARMACY
-
 
                                 ListTile(
                                   leading: SizedBox(
-                                    width:40,
-                                    height: 40,
-                                    child: RoundedLoadingButton(controller: _btnController, onPressed: ()async {
-                                      print("Sending prescription");
-                                      widget.rxfinal.PharmacyUName=snapshot.data[index]["username"].toString();
-                                      await ApiHandler().postrx("emr", "setrx", widget.rxfinal).then((value) {
-                                        print("IN THEN OF POST RX $value");
-                                        if(value){
-                                          _btnController.success();
-                                        }else{
-                                          _btnController.reset();
-                                        }
-                                      }).catchError((error){
-                                        _btnController.error();
-                                      });
-                                    }, child: Icon(FontAwesomeIcons.paperPlane),),
+                                    width: 50,
+                                    height: 50,
+                                    child: RoundedLoadingButton(
+                                      controller: _btnController,
+                                      onPressed: () async {
+                                        print("Sending prescription");
+                                        widget.rxfinal.PharmacyUName = snapshot
+                                            .data[index]["username"]
+                                            .toString();
+                                       var flag= await ApiHandler()
+                                            .postrx(
+                                                "emr", "setrx", widget.rxfinal)
+                                            .then((value) {
+                                          print("IN THEN OF POST RX $value");
+                                          if (value) {
+                                            _btnController.success();
+                                          } else {
+                                            _btnController.reset();
+                                          }
+                                        }).catchError((error) {
+                                          _btnController.error();
+                                        });
+                                       if(flag){
+                                         _btnController.success();
+                                       }else{
+                                         _btnController.error();
+                                       }
+                                      },
+                                      child: Icon(FontAwesomeIcons.paperPlane),
+                                    ),
                                   ),
-                                  title: Text("${_name(snapshot.data[index])} • ${dis.abs()}km"),
-                                  subtitle: Text(_address(snapshot.data[index]),),
+                                  title: Text(
+                                      "${_name(snapshot.data[index])} • ${_distance(snapshot.data[index])} miles"),
+                                  subtitle: Text(
+                                    _address(snapshot.data[index]),
+                                  ),
                                   trailing: _rating(snapshot.data[index]),
                                   onTap: () {
                                     panelController.close();
-                                    double lat = snapshot
-                                        .data[index]["lat"];
-                                    double long = snapshot
-                                        .data[index]["long"];
+                                    double lat = snapshot.data[index]["lat"];
+                                    double long = snapshot.data[index]["long"];
                                     mapController.animateCamera(
                                         CameraUpdate.newLatLngZoom(
                                             LatLng(lat, long), 16));
                                   },
-
                                 )
                               ],
                             ),
                           );
-
                         });
                   } else {
                     return Center(child: CircularProgressIndicator());

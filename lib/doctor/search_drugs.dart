@@ -156,10 +156,7 @@ class _SearchDrugsState extends State<SearchDrugs> {
                                     borderRadius: BorderRadius.circular(18)),
                                 title: Text("${drgname.toString()} CONTRAINDICATED"),
                                 subtitle: Text('EXP Date :: $ldate'),
-                                trailing: const Icon(
-                                  FontAwesomeIcons.x,
-                                  color: Colors.red,
-                                ),
+
                               ),
                             ),
                           );
@@ -219,11 +216,7 @@ class _SearchDrugsState extends State<SearchDrugs> {
                                 title: Text("${snapshot.data[index]["DName"].toString()} CONTRAINDICATED"),
                                 subtitle: Text(
                                     'EXP Date :: ${snapshot.data[index]["ExpDate"]}'),
-                                trailing: const Icon(
 
-                                  FontAwesomeIcons.x,
-                                  color: Colors.red,
-                                ),
                               ),
                             ),
                           );

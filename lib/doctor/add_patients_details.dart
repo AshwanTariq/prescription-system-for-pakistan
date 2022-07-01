@@ -94,7 +94,7 @@ class _PatientsMiniEMRState extends State<PatientsMiniEMR> {
         username: UserName,
         Name: conName.text,
         gender: getGender(_verticalGroupValue),
-        disease: allDisease.join(""), role: 2,
+        disease: allDisease.join(""), role: 1,
       );
       bool chk = await ApiHandler().postPatient("emr", "setPatinet", Patient);
       if (chk) {

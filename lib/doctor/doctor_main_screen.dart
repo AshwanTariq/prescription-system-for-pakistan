@@ -12,9 +12,9 @@ import 'dart:convert' as convert;
 import '../widgets/custom_widgets.dart';
 
 class DocHomePage extends StatefulWidget {
-   DocHomePage({Key? key,required this.docName}) : super(key: key);
+  DocHomePage({Key? key, required this.docName}) : super(key: key);
 
-   var docName;
+  var docName;
   @override
   State<DocHomePage> createState() => _DocHomePageState();
 }
@@ -36,8 +36,8 @@ class _DocHomePageState extends State<DocHomePage> {
     print(response.data.toString());
   }*/
 
-  String sorting="Sort";
-  List<String> sortingbylist=["date","name"];
+  String sorting = "Sort";
+  List<String> sortingbylist = ["date", "name"];
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
 
@@ -49,9 +49,9 @@ class _DocHomePageState extends State<DocHomePage> {
       gender: "",
       disease: "",
       lat: 0.0,
-      long: 0.0, role: 1);
+      long: 0.0,
+      role: 1);
   var apiHandler = ApiHandler();
-
 
   void _doSomething() async {
     await apiHandler
@@ -69,7 +69,7 @@ class _DocHomePageState extends State<DocHomePage> {
             Patientdetails: patientdetails,
           ),
         ),
-      );
+      ).whenComplete(() => _btnController.reset());
     });
 
     _btnController.reset();
@@ -86,9 +86,8 @@ class _DocHomePageState extends State<DocHomePage> {
             "assets/images/logo.png",
           ),
         ),
-        title:const Text("Patients", style: TextStyle(fontSize: 20)),
+        title: const Text("Patients", style: TextStyle(fontSize: 20)),
         actions: [
-
           /*DropdownButton<String>(
             icon: FaIcon(FontAwesomeIcons.sort,color: Colors.white,),
             items: sortingbylist.map((String value) {
@@ -104,17 +103,19 @@ class _DocHomePageState extends State<DocHomePage> {
               print(value);
             },
           ),*/
-          SizedBox(width: 5,),
-          Builder(
-            builder: (context) {
-              return IconButton(
-                  onPressed: () {Scaffold.of(context).openDrawer();},
-                  icon: const FaIcon(
-                    FontAwesomeIcons.bars,
-                    size: 25,
-                  ));
-            }
+          SizedBox(
+            width: 5,
           ),
+          Builder(builder: (context) {
+            return IconButton(
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                icon: const FaIcon(
+                  FontAwesomeIcons.bars,
+                  size: 25,
+                ));
+          }),
         ],
       ),
       floatingActionButton: SizedBox(
@@ -128,7 +129,9 @@ class _DocHomePageState extends State<DocHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text("Create Rx"),
-              SizedBox(width: 10,),
+              SizedBox(
+                width: 10,
+              ),
               Icon(
                 Icons.add,
                 size: 20,
@@ -157,33 +160,34 @@ class _DocHomePageState extends State<DocHomePage> {
 
                 return Container(
                   child: RefreshIndicator(
-                    onRefresh: ()  async => setState(() {}),
+                    onRefresh: () async => setState(() {}),
                     child: ListView.builder(
                       itemCount: list.length,
                       itemBuilder: (context, index) {
                         print(list.length);
-                       if(list.isNotEmpty){
-                         if (list[index] != null) {
-                           String Alldisease = list[index]["disease"].toString();
+                        if (list.isNotEmpty) {
+                          if (list[index] != null) {
+                            String Alldisease =
+                                list[index]["disease"].toString();
 
-
-                           return MyListtile(
-                             RxDetails: null,
-                             title:
-                             "${list[index]["Name"].toString()} • ${list[index]["Gender"].toString() == "F" ? "Female" : "Male"}",
-                             subtitle: Alldisease.replaceAll("?", ","),
-                             rxid: rxid,
-                             Docname: widget.docName,
-                             long: list[index]["long"],
-                             lat: list[index]["lat"], flag: true,
-
-                           );
-                         } else {
-                           return const Text("");
-                         }
-                       }else{
-                         return Center(child: Text("CREATE YOUR FIRST PREXCRIPTION"));
-                       }
+                            return MyListtile(
+                              RxDetails: null,
+                              title:
+                                  "${list[index]["Name"].toString()} • ${list[index]["Gender"].toString() == "F" ? "Female" : "Male"}",
+                              subtitle: Alldisease.replaceAll("?", ","),
+                              rxid: rxid,
+                              Docname: widget.docName,
+                              long: list[index]["long"],
+                              lat: list[index]["lat"],
+                              flag: true,
+                            );
+                          } else {
+                            return const Text("");
+                          }
+                        } else {
+                          return Center(
+                              child: Text("CREATE YOUR FIRST PREXCRIPTION"));
+                        }
                       },
                     ),
                   ),
