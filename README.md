@@ -1,6 +1,6 @@
-# rxpakistan 
+# Rx pakistan 
 
-A new Flutter project.
+A new Flutter project where Doctor Create rx for Patient and send rx to nearest pharmacy and admin can ban and unban the drugs and also can watch Stat
 
 ## Getting Started
 
