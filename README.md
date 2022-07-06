@@ -40,10 +40,10 @@ Doctor will add medicines to prescription and our System will check [CONTRAINDIC
 ## Pharmacy side screens
 ![pharmacy side screens](https://user-images.githubusercontent.com/81414269/177497656-ca1a4d70-855c-4e52-8e55-c3e85bc1a8ee.png)
 
-Patient side screens
+## Patient side screens
 ![Patients](https://user-images.githubusercontent.com/81414269/177497893-f5f78016-f276-4a40-b70f-4a40fc33a774.png)
 
-Admin Side Screens
+## Admin Side Screens
 ![Admin ban](https://user-images.githubusercontent.com/81414269/177497982-390e024d-5e18-4556-8dab-cb7274a25da8.png)
 
 ![admin stat](https://user-images.githubusercontent.com/81414269/177498119-2c3bcfeb-e274-47c9-acb1-5e3b4192fa42.png)
