@@ -2,7 +2,7 @@
 
 A new Flutter project where Doctor Create rx for Patient and send rx to nearest pharmacy and admin can ban and unban the drugs and also can watch Stat
 
-## Api Side is also uploaded
+## Web Api Side is also uploaded 
 
 This project is a starting point for a Flutter application.
 
@@ -31,7 +31,7 @@ Also Dr can create prescription for new Patient.
 ![Doctor Creating rx](https://user-images.githubusercontent.com/81414269/177494004-c8bc60d8-0107-47f7-9ab3-f9a182e2b871.png)
 
 ## Doctor Adding Drugs
-Doctor will add medicines to prescription and our System will check [CONTRAINDICATION](https://www.google.com/search?q=contraindication&oq=contraindication&aqs=chrome..69i57.14176j0j1&sourceid=chrome&ie=UTF-8#bsht=CgRmYnNtEgQIBBAA)Both DRUG TO DRUG and DRUG TO DISEASE in prescription and our System will give alert to doctor. DRUG TO DISEASE contraindication is given in Previous ScreenShot
+Doctor will add medicines to prescription and our System will check [CONTRAINDICATION](https://www.google.com/search?q=contraindication&oq=contraindication&aqs=chrome..69i57.14176j0j1&sourceid=chrome&ie=UTF-8#bsht=CgRmYnNtEgQIBBAA) Both DRUG TO DRUG and DRUG TO DISEASE in prescription and our System will give alert to doctor. DRUG TO DISEASE contraindication is given in Previous ScreenShot
 ![Doc Adding Drugs](https://user-images.githubusercontent.com/81414269/177494275-a51f87c4-60d9-4f62-a2b0-bdab54e9b02b.png)
 
 ## Nearest pharamcies
