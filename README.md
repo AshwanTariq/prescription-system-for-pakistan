@@ -4,9 +4,9 @@ A new Flutter project where Doctor Create rx for Patient and send rx to nearest 
 
 ## Web Api Side is also uploaded 
 
-- [Lab: API SIDE]([https://flutter.dev/docs/get-started/codelab](https://github.com/AshwanTariq/prescription-system-for-pakistan-Api-Side))
 
 
+[API SIDE](https://github.com/user/repo/blob/branch/other_file.md](https://flutter.dev/docs/get-started/codelab](https://github.com/AshwanTariq/prescription-system-for-pakistan-Api-Side)
 
 # VISUAL DIAGRAM
 
