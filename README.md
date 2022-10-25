@@ -2,7 +2,7 @@
 
 A new Flutter project where Doctor Create rx for Patient and send rx to nearest pharmacy and admin can ban and unban the drugs and also can watch Stat
 
-## Web Api Side is also uploaded on my acconut
+## Web Api Side is also uploaded on my github acconut
 
 
 
